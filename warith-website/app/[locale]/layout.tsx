@@ -1,0 +1,83 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { content, isLocale, locales, pageSlugs, type Locale } from "@/lib/content";
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: Readonly<{
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale: localeParam } = await params;
+  if (!isLocale(localeParam)) notFound();
+  const locale = localeParam as Locale;
+  const copy = content[locale];
+  const navItems = [
+    { href: `/${locale}`, label: copy.nav.home },
+    { href: `/${locale}/privacy-policy`, label: copy.nav.privacy },
+    { href: `/${locale}/terms`, label: copy.nav.terms },
+    { href: `/${locale}/child-safety`, label: copy.nav.safety },
+    { href: `/${locale}/delete-account`, label: copy.nav.deletion },
+  ];
+
+  return (
+    <div className="site" lang={locale} dir={copy.direction}>
+      <header className="site-header">
+        <div className="header-inner">
+          <Link className="brand" href={`/${locale}`} aria-label="Warith home">
+            <span className="brand-mark">W</span>
+            <span className="brand-name">Warith</span>
+          </Link>
+          <nav className="main-nav" aria-label="Main navigation">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <LanguageSwitcher current={locale} label={copy.nav.language} />
+        </div>
+      </header>
+
+      <main>{children}</main>
+
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-brand-block">
+            <Link className="brand footer-brand" href={`/${locale}`}>
+              <span className="brand-mark">W</span>
+              <span className="brand-name">Warith</span>
+            </Link>
+            <p>{copy.footer.description}</p>
+          </div>
+          <div className="footer-links-block">
+            <h2>{copy.footer.links}</h2>
+            <div className="footer-links">
+              {pageSlugs.map((slug) => (
+                <Link key={slug} href={`/${locale}/${slug}`}>
+                  {copy.homeCards.find((card) => card.slug === slug)?.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="footer-contact">
+            <h2>{copy.footer.contact}</h2>
+            <a href="mailto:support@Warith.app">support@Warith.app</a>
+            <span>warith.online</span>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} Warith. {copy.footer.rights}</span>
+          <span>{copy.footer.lastUpdated}</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
