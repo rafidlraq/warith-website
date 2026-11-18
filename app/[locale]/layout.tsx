@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import MainNav from "@/components/MainNav";
 import { content, isLocale, locales, pageSlugs, type Locale } from "@/lib/content";
+import { SITE_DOMAIN, SUPPORT_EMAIL, ui } from "@/lib/ui";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -29,31 +31,27 @@ export default async function LocaleLayout({
 
   return (
     <div className="site" lang={locale} dir={copy.direction}>
+      <a className="skip-link" href="#content">
+        {ui[locale].skip}
+      </a>
+
       <header className="site-header">
         <div className="header-inner">
-          <Link className="brand" href={`/${locale}`} aria-label="Warith home">
-            <span className="brand-mark">W</span>
-            <span className="brand-name">Warith</span>
+          <Link className="brand" href={`/${locale}`} aria-label="Warith">
+            Warith
           </Link>
-          <nav className="main-nav" aria-label="Main navigation">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <MainNav items={navItems} label="Main navigation" />
           <LanguageSwitcher current={locale} label={copy.nav.language} />
         </div>
       </header>
 
-      <main>{children}</main>
+      <main id="content">{children}</main>
 
       <footer className="site-footer">
         <div className="footer-inner">
           <div className="footer-brand-block">
-            <Link className="brand footer-brand" href={`/${locale}`}>
-              <span className="brand-mark">W</span>
-              <span className="brand-name">Warith</span>
+            <Link className="brand brand-footer" href={`/${locale}`}>
+              Warith
             </Link>
             <p>{copy.footer.description}</p>
           </div>
@@ -69,12 +67,16 @@ export default async function LocaleLayout({
           </div>
           <div className="footer-contact">
             <h2>{copy.footer.contact}</h2>
-            <a href="mailto:support@Warith.app">support@Warith.app</a>
-            <span>warith.online</span>
+            <a className="mail-link" href={`mailto:${SUPPORT_EMAIL}`} dir="ltr">
+              {SUPPORT_EMAIL}
+            </a>
+            <span dir="ltr">{SITE_DOMAIN}</span>
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Warith. {copy.footer.rights}</span>
+          <span>
+            © {new Date().getFullYear()} Warith. {copy.footer.rights}
+          </span>
           <span>{copy.footer.lastUpdated}</span>
         </div>
       </footer>

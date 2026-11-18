@@ -12,6 +12,13 @@ A multilingual Next.js App Router website for Warith, prepared for deployment on
 - Responsive layout, page metadata, `robots.txt` and `sitemap.xml`.
 - An external account-deletion email action so users who no longer have the app can contact Warith without reinstalling it.
 
+## Design system
+
+- Primary colour `#0090FD`; centred blue "Warith" wordmark, pill navigation with a blue active state, language dropdown, soft-blue wave behind each page title.
+- Every policy section is a numbered card (blue badge + tinted header band). Styles live in `app/globals.css`; all spacing uses logical properties so RTL (ar, ku) and LTR (en, fr, es) share one stylesheet.
+- Page content stays in `lib/content.ts`; shared UI strings (subtitles, help block, deletion e-mail template) are in `lib/ui.ts`. The support contact is the e-mail `support@warith.app` only (`SUPPORT_EMAIL` in `lib/ui.ts`); no support phone number is published.
+- Fonts (Inter + Noto Sans Arabic) are loaded with `next/font/google` and self-hosted at build time.
+
 ## Routes
 
 For each language (`ar`, `ku`, `en`, `fr`, `es`):
@@ -58,7 +65,7 @@ npm run start
 
 ## Account deletion integration — important before Google Play submission
 
-The deletion page includes an external `mailto:` action addressed to `support@Warith.app`. It opens a pre-filled email draft; the user must send that email from an email app or webmail. This is an interim contact path, not an automated web submission. This starter project does **not** connect to the Warith production database and does not itself delete accounts. Before relying on this page for Google Play account-deletion compliance, connect a real web request form or a verified support intake endpoint that can receive requests even when the app is uninstalled.
+The deletion page includes an external `mailto:` action addressed to `support@warith.app`. It opens a pre-filled email draft; the user must send that email from an email app or webmail. This is an interim contact path, not an automated web submission. This starter project does **not** connect to the Warith production database and does not itself delete accounts. Before relying on this page for Google Play account-deletion compliance, connect a real web request form or a verified support intake endpoint that can receive requests even when the app is uninstalled.
 
 For a fully automated and auditable deletion flow, connect the external form/action to a real account-deletion request endpoint in the Warith backend. The endpoint must authenticate or safely verify the requester, create a traceable deletion request, prevent abuse, support cancellation during the stated 30-day period if that remains the actual product policy, and trigger deletion of the account data when due. Do not invent an API URL: obtain the actual route and request schema from the backend implementation, then wire it in. Update the public wording if the backend's real behaviour differs.
 
@@ -72,8 +79,7 @@ The supplied policy content has been organised and translated for the website. T
 
 - Product: Warith
 - Domain: `warith.online`
-- Support email: `support@Warith.app`
-- Support number shown in the supplied policy text: `947286`
+- Support email: `support@warith.app`
 - Primary colour: `#0090FD`
 - Secondary colour: `#6BD2FF`
 
